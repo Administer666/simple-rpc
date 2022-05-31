@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: dev
+server:
+  port: 8081
+rpc:
+  server:
+    discovery-address: 192.168.56.2:2181
+    port: 9091
+    app-name: provider
+logging:
+  level:
+    root: debug

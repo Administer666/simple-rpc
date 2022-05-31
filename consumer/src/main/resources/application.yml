@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: dev
+server:
+  port: 8080
+rpc:
+  client:
+    discovery-address: 192.168.56.2:2181
+#    serialization: java
+logging:
+  level:
+    root: debug
