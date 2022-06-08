@@ -7,7 +7,7 @@ rpc:
   server:
     discovery-address: 192.168.56.2:2181
     port: 9092
-    app-name: provider1
+    app-name: provider
 logging:
   level:
     root: debug

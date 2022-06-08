@@ -38,11 +38,10 @@ public class RpcAutowiredBeanPostProcessor implements BeanPostProcessor, Applica
         for (Field field : fields) {
             RpcAutowired annotation = field.getAnnotation(RpcAutowired.class);
             if (annotation != null) {
-                String loadBalanceName = annotation.loadbalance();
-                LoadBalance loadBalance = (LoadBalance) applicationContext.getBean(loadBalanceName);
+                LoadBalance loadBalance = applicationContext.getBean(annotation.loadbalance(), LoadBalance.class);
                 try {
                     field.setAccessible(true);
-                    field.set(bean, RpcProxyFactory.getProxy(field.getType(), discoveryService, properties, loadBalance));
+                    field.set(bean, RpcProxyFactory.getProxy(field.getType(), annotation.version(), discoveryService, properties, loadBalance));
                 } catch (IllegalAccessException e) {
                     log.error("属性赋值失败，{}", e);
                 }

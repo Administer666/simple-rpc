@@ -11,8 +11,8 @@ import lombok.Data;
 @Data
 public class RpcRequestMessage extends Message {
 
-    // 被调用接口的全限定名
-    private String interfaceName;
+    // 被调用接口的全限定名 + 版本号
+    private String serviceName;
     // 方法名
     private String methodName;
     // 参数类型

@@ -14,11 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HelloController {
 
-    @RpcAutowired(loadbalance = "random")
+    @RpcAutowired
     private HelloService helloService;
+
+    @RpcAutowired(version = "2.0")
+    private HelloService helloService2;
 
     @GetMapping("/hello")
     public String hello(@RequestParam("name") String name) {
         return helloService.sayHello(name);
+    }
+
+    @GetMapping("/hello2")
+    public String hello2(@RequestParam("name") String name) {
+        return helloService2.sayHello(name);
     }
 }

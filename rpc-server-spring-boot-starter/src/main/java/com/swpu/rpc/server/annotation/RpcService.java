@@ -23,7 +23,7 @@ public @interface RpcService {
     String interfaceName() default "";
 
     // 版本号
-    String version() default "";
+    String version() default "1.0";
 
     // 负载均衡权重
     int weight() default 1;

@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 public @interface RpcAutowired {
 
     // 版本号
-    String version() default "";
+    String version() default "1.0";
 
     // 负载均衡策略
     String loadbalance() default "roundrobin";

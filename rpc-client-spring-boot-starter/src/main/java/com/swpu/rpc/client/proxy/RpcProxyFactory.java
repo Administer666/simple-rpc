@@ -5,6 +5,7 @@ import com.swpu.rpc.client.core.PromiseMap;
 import com.swpu.rpc.client.core.RpcClientFactory;
 import com.swpu.rpc.core.balance.LoadBalance;
 import com.swpu.rpc.core.common.ServiceInfo;
+import com.swpu.rpc.core.common.ServiceUtil;
 import com.swpu.rpc.core.discovery.DiscoveryService;
 import com.swpu.rpc.core.message.RpcRequestMessage;
 import com.swpu.rpc.core.serializer.SerializerEnum;
@@ -22,9 +23,10 @@ import static com.swpu.rpc.core.protocol.ProtocolConstants.RPCREQUEST;
  */
 public class RpcProxyFactory {
 
-    public static <T> T getProxy(Class<T> clazz, DiscoveryService discoveryService, RpcClientProperties properties, LoadBalance loadBalance) {
+    public static <T> T getProxy(Class<?> clazz, String version, DiscoveryService discoveryService, RpcClientProperties properties, LoadBalance loadBalance) {
         T proxyInstance = (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, (proxy, method, args) -> {
-            ServiceInfo serviceInfo = discoveryService.discovery(clazz.getName(), loadBalance);
+            String serviceName = ServiceUtil.join(clazz.getName(), version);
+            ServiceInfo serviceInfo = discoveryService.discovery(serviceName, loadBalance);
             if (serviceInfo == null) {
                 throw new RuntimeException("无法在注册中心找到服务：" + serviceInfo.getServiceName());
             }
@@ -34,7 +36,7 @@ public class RpcProxyFactory {
             message.setMessageType(RPCREQUEST);
             message.setSerialization((byte) SerializerEnum.getSerializerEnumByName(properties.getSerialization()).ordinal());
             message.setSequenceId(sequenceId);
-            message.setInterfaceName(clazz.getName());
+            message.setServiceName(serviceName);
             message.setMethodName(method.getName());
             message.setParameterTypes(method.getParameterTypes());
             message.setParameterValues(args);

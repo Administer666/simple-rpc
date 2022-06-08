@@ -1,6 +1,7 @@
 package com.swpu.rpc.server.annotation;
 
 import com.swpu.rpc.core.common.ServiceInfo;
+import com.swpu.rpc.core.common.ServiceUtil;
 import com.swpu.rpc.core.register.RegisterService;
 import com.swpu.rpc.server.bean.LocalServiceBeanCache;
 import com.swpu.rpc.server.config.RpcServerProperties;
@@ -50,13 +51,14 @@ public class RpcServiceBeanPostProcessor implements BeanPostProcessor {
                 if (interfaceClass == null) {
                     throw new ClassNotFoundException("服务实现类 " + beanClass.getName() + " 未提供接口");
                 }
-                LocalServiceBeanCache.put(interfaceClass.getName(), bean);
+                String serviceName = ServiceUtil.join(interfaceClass.getName(), annotation.version());
+                LocalServiceBeanCache.put(serviceName, bean);
                 ServiceInfo serviceInfo = new ServiceInfo();
                 serviceInfo
                         .setAddress(InetAddress.getLocalHost().getHostAddress())
                         .setPort(properties.getPort())
                         .setAppName(properties.getAppName())
-                        .setServiceName(interfaceClass.getName())
+                        .setServiceName(serviceName)
                         .setWeight(annotation.weight());
                 registerService.register(serviceInfo);
             } catch (Exception e) {

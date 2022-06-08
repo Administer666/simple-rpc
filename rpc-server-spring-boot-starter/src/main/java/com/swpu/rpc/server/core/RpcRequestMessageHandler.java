@@ -30,8 +30,8 @@ public class RpcRequestMessageHandler extends SimpleChannelInboundHandler<RpcReq
         response.setSerialization(request.getSerialization());
         response.setSequenceId(request.getSequenceId());
 
-        String interfaceName = request.getInterfaceName();
-        Object bean = LocalServiceBeanCache.get(interfaceName);
+        String serviceName = request.getServiceName();
+        Object bean = LocalServiceBeanCache.get(serviceName);
         Method method = bean.getClass().getMethod(request.getMethodName(), request.getParameterTypes());
         Object returnValue = method.invoke(bean, request.getParameterValues());
         response.setReturnValue(returnValue);
