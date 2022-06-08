@@ -6,7 +6,7 @@ server:
 rpc:
   client:
     discovery-address: 192.168.56.2:2181
-#    serialization: java
+    serialization: protostuff
 logging:
   level:
     root: debug

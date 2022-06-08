@@ -47,11 +47,21 @@
             <version>5.2.1</version>
         </dependency>
 
-        <!--以下全是序列化相关依赖-->
+        <!--以下是序列化相关依赖-->
         <dependency>
             <groupId>com.caucho</groupId>
             <artifactId>hessian</artifactId>
             <version>4.0.66</version>
+        </dependency>
+        <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-core</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-runtime</artifactId>
+            <version>1.7.2</version>
         </dependency>
     </dependencies>
 </project>

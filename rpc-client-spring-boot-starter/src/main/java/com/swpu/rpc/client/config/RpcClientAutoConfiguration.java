@@ -1,6 +1,9 @@
 package com.swpu.rpc.client.config;
 
 import com.swpu.rpc.client.annotation.RpcAutowiredBeanPostProcessor;
+import com.swpu.rpc.core.balance.LoadBalance;
+import com.swpu.rpc.core.balance.RandomLoadBalance;
+import com.swpu.rpc.core.balance.RoundRobinLoadBalance;
 import com.swpu.rpc.core.discovery.DiscoveryService;
 import com.swpu.rpc.core.discovery.ZookeeperDiscoveryService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -16,6 +19,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties(RpcClientProperties.class)
 public class RpcClientAutoConfiguration {
+
+    @Bean(name = "random")
+    public LoadBalance randomLoadBalance() {
+        return new RandomLoadBalance();
+    }
+
+    @Bean(name = "roundrobin")
+    public LoadBalance roundRobinLoadBalance() {
+        return new RoundRobinLoadBalance();
+    }
 
     @Bean
     @ConditionalOnMissingBean

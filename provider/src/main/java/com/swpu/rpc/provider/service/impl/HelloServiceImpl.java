@@ -8,10 +8,10 @@ import com.swpu.rpc.service.HelloService;
  * @Date 2022/5/30 21:58
  * @Description
  */
-@RpcService
+@RpcService(weight = 2)
 public class HelloServiceImpl implements HelloService {
     @Override
     public String sayHello(String name) {
-        return "你好，" + name;
+        return "你好，" + name + "..........2";
     }
 }

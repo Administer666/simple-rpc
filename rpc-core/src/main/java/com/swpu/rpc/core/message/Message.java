@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @Description
  */
 @Data
-public class Message<T> implements Serializable {
+public class Message implements Serializable {
 
     private byte messageType;
     private byte serialization;

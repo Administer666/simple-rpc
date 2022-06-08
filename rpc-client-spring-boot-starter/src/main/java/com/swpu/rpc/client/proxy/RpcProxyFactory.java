@@ -3,6 +3,7 @@ package com.swpu.rpc.client.proxy;
 import com.swpu.rpc.client.config.RpcClientProperties;
 import com.swpu.rpc.client.core.PromiseMap;
 import com.swpu.rpc.client.core.RpcClientFactory;
+import com.swpu.rpc.core.balance.LoadBalance;
 import com.swpu.rpc.core.common.ServiceInfo;
 import com.swpu.rpc.core.discovery.DiscoveryService;
 import com.swpu.rpc.core.message.RpcRequestMessage;
@@ -21,9 +22,9 @@ import static com.swpu.rpc.core.protocol.ProtocolConstants.RPCREQUEST;
  */
 public class RpcProxyFactory {
 
-    public static <T> T getProxy(Class<T> clazz, DiscoveryService discoveryService, RpcClientProperties properties) {
+    public static <T> T getProxy(Class<T> clazz, DiscoveryService discoveryService, RpcClientProperties properties, LoadBalance loadBalance) {
         T proxyInstance = (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, (proxy, method, args) -> {
-            ServiceInfo serviceInfo = discoveryService.discovery(clazz.getName());
+            ServiceInfo serviceInfo = discoveryService.discovery(clazz.getName(), loadBalance);
             if (serviceInfo == null) {
                 throw new RuntimeException("无法在注册中心找到服务：" + serviceInfo.getServiceName());
             }

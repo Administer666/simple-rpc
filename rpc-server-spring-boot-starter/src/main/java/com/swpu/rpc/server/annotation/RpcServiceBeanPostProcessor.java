@@ -29,21 +29,38 @@ public class RpcServiceBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        if (bean.getClass().isAnnotationPresent(RpcService.class)) {
+        Class<?> beanClass = bean.getClass();
+        RpcService annotation = beanClass.getAnnotation(RpcService.class);
+        if (annotation != null) {
             try {
-                Class<?>[] interfaces = bean.getClass().getInterfaces();
-                for (Class<?> inface : interfaces) {
-                    LocalServiceBeanCache.put(inface.getName(), bean);
-                    ServiceInfo serviceInfo = new ServiceInfo();
-                    serviceInfo
-                            .setAddress(InetAddress.getLocalHost().getHostAddress())
-                            .setPort(properties.getPort())
-                            .setAppName(properties.getAppName())
-                            .setServiceName(inface.getName());
-                    registerService.register(serviceInfo);
+                Class<?> interfaceClass = null;
+                if (annotation.interfaceClass() != void.class) {
+                    interfaceClass = annotation.interfaceClass();
+                } else if (!"".equals(annotation.interfaceName())) {
+                    interfaceClass = Class.forName(annotation.interfaceName());
+                } else { // 啥都没给就根据其实现的接口类型进行推断
+                    Class<?>[] interfaces = beanClass.getInterfaces();
+                    for (Class<?> itfs : interfaces) {
+                        if (beanClass.getSimpleName().toLowerCase().contains(itfs.getSimpleName().toLowerCase())) {
+                            interfaceClass = itfs;
+                            break;
+                        }
+                    }
                 }
+                if (interfaceClass == null) {
+                    throw new ClassNotFoundException("服务实现类 " + beanClass.getName() + " 未提供接口");
+                }
+                LocalServiceBeanCache.put(interfaceClass.getName(), bean);
+                ServiceInfo serviceInfo = new ServiceInfo();
+                serviceInfo
+                        .setAddress(InetAddress.getLocalHost().getHostAddress())
+                        .setPort(properties.getPort())
+                        .setAppName(properties.getAppName())
+                        .setServiceName(interfaceClass.getName())
+                        .setWeight(annotation.weight());
+                registerService.register(serviceInfo);
             } catch (Exception e) {
-                log.error("服务注册出错，{}", e);
+                log.error("服务注册失败：{}", e);
             }
         }
         return bean;

@@ -1,6 +1,6 @@
 package com.swpu.rpc.server.annotation;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
 
@@ -13,14 +13,18 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Service
+@Component
 public @interface RpcService {
 
-//    /**
-//     * 标明是哪个服务接口的实现类
-//     *
-//     * @return
-//     */
-//    Class<?> interfaceType() default Object.class;
+    // 要被实现的服务的类对象
+    Class<?> interfaceClass() default void.class;
 
+    // 要被实现的服务的类的全限定名
+    String interfaceName() default "";
+
+    // 版本号
+    String version() default "";
+
+    // 负载均衡权重
+    int weight() default 1;
 }

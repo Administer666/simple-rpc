@@ -7,7 +7,8 @@ package com.swpu.rpc.core.serializer;
  */
 public enum SerializerEnum {
     HESSIAN,
-    JAVA;
+    JAVA,
+    PROTOSTUFF;
 
     public static SerializerEnum getSerializerEnumByName(String name) {
         for (SerializerEnum serializerEnum : SerializerEnum.values()) {

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HelloController {
 
-    @RpcAutowired
+    @RpcAutowired(loadbalance = "random")
     private HelloService helloService;
 
     @GetMapping("/hello")

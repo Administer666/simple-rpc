@@ -1,5 +1,6 @@
 package com.swpu.rpc.core.discovery;
 
+import com.swpu.rpc.core.balance.LoadBalance;
 import com.swpu.rpc.core.common.ServiceInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
@@ -13,6 +14,7 @@ import org.apache.zookeeper.CreateMode;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * @Author lms
@@ -48,11 +50,11 @@ public class ZookeeperDiscoveryService implements DiscoveryService {
     }
 
     @Override
-    public ServiceInfo discovery(String serviceName) throws Exception {
+    public ServiceInfo discovery(String serviceName, LoadBalance loadBalance) throws Exception {
         Collection<ServiceInstance<ServiceInfo>> serviceInstances = this.serviceDiscovery.queryForInstances(serviceName);
-        // 返回第一个
+        // 根据不同的负载均衡策略选出一个服务类
         return CollectionUtils.isEmpty(serviceInstances) ? null :
-                serviceInstances.stream().findFirst().get().getPayload();
+                loadBalance.chooseOne(serviceInstances.stream().map(ServiceInstance::getPayload).collect(Collectors.toList()));
     }
 
     @Override

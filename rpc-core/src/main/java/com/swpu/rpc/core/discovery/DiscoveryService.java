@@ -1,5 +1,6 @@
 package com.swpu.rpc.core.discovery;
 
+import com.swpu.rpc.core.balance.LoadBalance;
 import com.swpu.rpc.core.common.ServiceInfo;
 
 /**
@@ -9,10 +10,11 @@ import com.swpu.rpc.core.common.ServiceInfo;
  */
 public interface DiscoveryService {
 
-    ServiceInfo discovery(String serviceName) throws Exception;
+    ServiceInfo discovery(String serviceName, LoadBalance loadBalance) throws Exception;
 
     /**
      * 全局唯一id生成器，不应该写在这里，为了方便
+     *
      * @return
      * @throws Exception
      */

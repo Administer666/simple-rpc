@@ -2,12 +2,12 @@ spring:
   profiles:
     active: dev
 server:
-  port: 8081
+  port: 8082
 rpc:
   server:
     discovery-address: 192.168.56.2:2181
-    port: 9091
-    app-name: provider
+    port: 9092
+    app-name: provider1
 logging:
   level:
     root: debug

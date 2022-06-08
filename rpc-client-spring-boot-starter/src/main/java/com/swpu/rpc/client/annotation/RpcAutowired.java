@@ -12,4 +12,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface RpcAutowired {
+
+    // 版本号
+    String version() default "";
+
+    // 负载均衡策略
+    String loadbalance() default "roundrobin";
 }

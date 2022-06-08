@@ -31,4 +31,9 @@ public class ServiceInfo {
      * 端口
      */
     private Integer port;
+
+    /**
+     * 负载均衡权重
+     */
+    private Integer weight;
 }
