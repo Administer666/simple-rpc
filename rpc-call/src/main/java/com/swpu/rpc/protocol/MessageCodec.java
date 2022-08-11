@@ -1,19 +1,19 @@
 package com.swpu.rpc.protocol;
 
+import com.swpu.rpc.config.Config;
 import com.swpu.rpc.message.Message;
+import com.swpu.rpc.message.RpcRequestMessage;
+import com.swpu.rpc.message.RpcResponseMessage;
+import com.swpu.rpc.serializer.Serializer;
+import com.swpu.rpc.serializer.SerializerEnum;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.List;
 
-import static com.swpu.rpc.protocol.ProtocolConstants.MAGIC;
-import static com.swpu.rpc.protocol.ProtocolConstants.VERSION;
+import static com.swpu.rpc.protocol.ProtocolConstants.*;
 
 /**
  * @Author lms
@@ -38,17 +38,14 @@ public class MessageCodec extends MessageToMessageCodec<ByteBuf, Message> {
         // 2字节版本号
         out.writeShort(VERSION);
         // 1字节的序列化算法
-        out.writeByte(msg.getSerialization());
+        SerializerEnum serializerEnum = SerializerEnum.getSerializerEnumByName(Config.getSerializer());
+        out.writeByte(serializerEnum.ordinal());
         // 1字节的报文类型
         out.writeByte(msg.getMessageType());
         // 4字节消息序号
         out.writeInt(msg.getSequenceId());
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
-        oos.writeObject(msg);
-        byte[] bytes = bos.toByteArray();
-
+        byte[] bytes = serializerEnum.getSerializer().serialize(msg);
         // 4字节消息长度
         out.writeInt(bytes.length);
         // 不定长消息正文
@@ -71,9 +68,13 @@ public class MessageCodec extends MessageToMessageCodec<ByteBuf, Message> {
         byte[] bytes = new byte[length];
         in.readBytes(bytes, 0, length); // 消息正文读到byte数组里
 
-        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        ObjectInputStream ois = new ObjectInputStream(bis);
-        Message message = (Message) ois.readObject();
+        Serializer serializer = SerializerEnum.getSerializerById(serialization);
+        Message message;
+        if (RPCREQUEST == messageType) {
+            message = serializer.deserialize(RpcRequestMessage.class, bytes);
+        } else {
+            message = serializer.deserialize(RpcResponseMessage.class, bytes);
+        }
         out.add(message);
     }
 }

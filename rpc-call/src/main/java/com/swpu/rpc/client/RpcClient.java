@@ -3,6 +3,7 @@ package com.swpu.rpc.client;
 import com.swpu.rpc.api.CalculateService;
 import com.swpu.rpc.api.HelloService;
 import com.swpu.rpc.client.handler.RpcResponseHandler;
+import com.swpu.rpc.config.Config;
 import com.swpu.rpc.message.RpcRequestMessage;
 import com.swpu.rpc.protocol.MessageCodec;
 import com.swpu.rpc.protocol.ProtocolFrameDecoder;
@@ -100,7 +101,7 @@ public class RpcClient {
                             ch.pipeline().addLast(RPC_RESPONSE_HANDLER);
                         }
                     })
-                    .connect("127.0.0.1", 8080)
+                    .connect(Config.getServerHost(), Config.getServerPort())
                     .sync()
                     .channel();
             channel.closeFuture().addListener(future -> group.shutdownGracefully());

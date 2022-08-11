@@ -1,5 +1,6 @@
 package com.swpu.rpc.server;
 
+import com.swpu.rpc.config.Config;
 import com.swpu.rpc.server.handler.RpcRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -38,7 +39,7 @@ public class RpcServer {
                             ch.pipeline().addLast(RPC_REQUEST_HANDLER);
                         }
                     })
-                    .bind(8080)
+                    .bind(Config.getServerPort())
                     .sync()
                     .channel();
             channel.closeFuture().sync();

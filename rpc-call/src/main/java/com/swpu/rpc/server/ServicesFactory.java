@@ -20,11 +20,13 @@ public class ServicesFactory {
     static {
         try (InputStream in = ServicesFactory.class.getClassLoader().getResourceAsStream("application.properties")) {
             properties.load(in);
-            Set<String> serviceNames = properties.stringPropertyNames();
-            for (String serviceName : serviceNames) {
-                Class<?> serviceClass = Class.forName(serviceName);
-                Class<?> serviceImplClass = Class.forName(properties.getProperty(serviceName));
-                beanMap.put(serviceClass, serviceImplClass.newInstance());
+            Set<String> keys = properties.stringPropertyNames();
+            for (String key : keys) {
+                if (key.endsWith("Service")) {
+                    Class<?> serviceClass = Class.forName(key);
+                    Class<?> serviceImplClass = Class.forName(properties.getProperty(key));
+                    beanMap.put(serviceClass, serviceImplClass.newInstance());
+                }
             }
         } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             throw new ExceptionInInitializerError(e);
@@ -33,11 +35,5 @@ public class ServicesFactory {
 
     public static <T> T getService(Class<T> serviceClass) {
         return (T) beanMap.get(serviceClass);
-    }
-
-    public static void main(String[] args) {
-        for (Map.Entry<Class<?>, Object> entry : beanMap.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
     }
 }
