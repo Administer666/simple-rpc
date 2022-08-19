@@ -4,6 +4,7 @@ import com.swpu.rpc.client.RpcClient;
 import com.swpu.rpc.client.config.RpcClientProperties;
 import com.swpu.rpc.core.balance.LoadBalance;
 import com.swpu.rpc.core.common.ServiceInfo;
+import com.swpu.rpc.core.common.ServiceUtil;
 import com.swpu.rpc.core.discovery.DiscoveryService;
 import com.swpu.rpc.core.exception.ResourceNotFoundException;
 import com.swpu.rpc.core.exception.RpcException;
@@ -25,11 +26,13 @@ import static com.swpu.rpc.core.protocol.ProtocolConstants.RPCREQUEST;
 public class RpcProxyFactory {
 
     public static <T> T getProxy(Class<?> clazz,
+                                 String version,
                                  DiscoveryService discoveryService,
                                  RpcClientProperties properties,
                                  LoadBalance loadBalance) {
         T proxyInstance = (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, (proxy, method, args) -> {
-            ServiceInfo serviceInfo = discoveryService.discovery(clazz.getName(), loadBalance);
+            String serviceName = ServiceUtil.serviceKey(clazz.getName(), version);
+            ServiceInfo serviceInfo = discoveryService.discovery(serviceName, loadBalance);
             if (serviceInfo == null) {
                 throw new ResourceNotFoundException("无法在注册中心找到服务：" + serviceInfo.getServiceName());
             }
@@ -38,7 +41,7 @@ public class RpcProxyFactory {
             request.setSequenceId(sequenceId);
             request.setMessageType(RPCREQUEST);
             request.setSerializerId((byte) SerializerEnum.getSerializerEnumByName(properties.getSerialization()).ordinal());
-            request.setServiceName(clazz.getName());
+            request.setServiceName(serviceName);
             request.setMethodName(method.getName());
             request.setParameterTypes(method.getParameterTypes());
             request.setParameterValues(args);

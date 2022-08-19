@@ -1,6 +1,7 @@
 package com.swpu.rpc.server.annotation;
 
 import com.swpu.rpc.core.common.ServiceInfo;
+import com.swpu.rpc.core.common.ServiceUtil;
 import com.swpu.rpc.core.register.RegisterService;
 import com.swpu.rpc.server.config.RpcServerProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +56,7 @@ public class RpcServiceBeanPostProcessor implements BeanPostProcessor {
                 if (serviceClass == null) {
                     throw new ClassNotFoundException("服务实现类 " + beanClass.getName() + " 未提供接口");
                 }
-                String serviceName = serviceClass.getName();
+                String serviceName = ServiceUtil.serviceKey(serviceClass.getName(), annotation.version());
                 // 将该服务实现类的单例对象放入缓存中，以便后续 RpcRequestHandler反射调方法用
                 serviceCacheMap.put(serviceName, bean);
                 ServiceInfo serviceInfo = new ServiceInfo()
