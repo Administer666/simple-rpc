@@ -2,6 +2,7 @@ package com.swpu.rpc.client.proxy;
 
 import com.swpu.rpc.client.RpcClient;
 import com.swpu.rpc.client.config.RpcClientProperties;
+import com.swpu.rpc.core.balance.LoadBalance;
 import com.swpu.rpc.core.common.ServiceInfo;
 import com.swpu.rpc.core.discovery.DiscoveryService;
 import com.swpu.rpc.core.exception.ResourceNotFoundException;
@@ -25,9 +26,10 @@ public class RpcProxyFactory {
 
     public static <T> T getProxy(Class<?> clazz,
                                  DiscoveryService discoveryService,
-                                 RpcClientProperties properties) {
+                                 RpcClientProperties properties,
+                                 LoadBalance loadBalance) {
         T proxyInstance = (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, (proxy, method, args) -> {
-            ServiceInfo serviceInfo = discoveryService.discovery(clazz.getName());
+            ServiceInfo serviceInfo = discoveryService.discovery(clazz.getName(), loadBalance);
             if (serviceInfo == null) {
                 throw new ResourceNotFoundException("无法在注册中心找到服务：" + serviceInfo.getServiceName());
             }

@@ -8,7 +8,7 @@ import com.swpu.rpc.service.HelloService;
  * @Date 2022/5/30 21:58
  * @Description
  */
-@RpcService
+@RpcService(weight = 3)
 public class HelloServiceImpl implements HelloService {
     @Override
     public String sayHello(String name) {

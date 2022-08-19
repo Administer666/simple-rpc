@@ -61,6 +61,7 @@ public class RpcServiceBeanPostProcessor implements BeanPostProcessor {
                 ServiceInfo serviceInfo = new ServiceInfo()
                         .setAddress(Inet4Address.getLocalHost().getHostAddress())
                         .setPort(properties.getPort())
+                        .setWeight(annotation.weight())
                         .setServiceName(serviceName);
                 // 将服务信息注册到注册中心
                 registerService.register(serviceInfo);
